@@ -138,6 +138,38 @@
 
     .empty { color: #bbb; font-size: 0.88rem; font-style: italic; }
 
+    .privacy-badge {
+      position: fixed;
+      top: 12px;
+      right: 14px;
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      color: #856404;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 20px;
+      z-index: 999;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+      cursor: default;
+    }
+    .privacy-badge:hover::after {
+      content: 'This site is publicly accessible. Do not add passwords, addresses, financial info, or anything sensitive.';
+      position: absolute;
+      top: 28px;
+      right: 0;
+      background: #856404;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 400;
+      padding: 8px 12px;
+      border-radius: 8px;
+      width: 240px;
+      line-height: 1.4;
+      white-space: normal;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
     footer {
       text-align: center;
       color: #bbb;
@@ -152,6 +184,8 @@
   </style>
 </head>
 <body>
+
+  <div class="privacy-badge" title="Public site — no personal info">⚠️ Public Site</div>
 
   <header>
     <h1>💜 Big Belle's Dashboard</h1>
