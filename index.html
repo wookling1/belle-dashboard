@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="last-updated" content="Apr 23, 2026 — tab navigation added">
+  <meta name="last-updated" content="Apr 23, 2026 — mobile-optimized">
   <title>Big Belle's Dashboard 💜</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -324,10 +324,85 @@
       margin-top: 40px;
     }
 
+    /* ── Mobile responsiveness (≤ 480px — iPhone SE 375px / iPhone 14 390px) ── */
     @media (max-width: 480px) {
-      header h1 { font-size: 1.5rem; }
-      .grid { grid-template-columns: 1fr; }
-      .tab-btn { font-size: 0.8rem; padding: 7px 14px; }
+
+      body {
+        padding: 16px 12px;
+      }
+
+      /* Push header content below the fixed privacy badge */
+      header {
+        padding-top: 44px;
+      }
+
+      header h1 {
+        font-size: 1.35rem;
+      }
+
+      header p {
+        font-size: 0.82rem;
+      }
+
+      /* Privacy badge: shrink on mobile so it sits cleanly in the corner */
+      .privacy-badge {
+        font-size: 0.66rem;
+        padding: 4px 8px;
+        top: 8px;
+        right: 8px;
+      }
+
+      /* Tab nav: horizontal scroll instead of wrapping — no overflow */
+      .tab-nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;          /* Firefox */
+        justify-content: flex-start;
+        padding-bottom: 4px;
+        gap: 6px;
+        margin-bottom: 20px;
+      }
+
+      .tab-nav::-webkit-scrollbar {
+        display: none;                  /* Chrome / Safari */
+      }
+
+      /* Tab buttons: readable text + 44 px min touch target */
+      .tab-btn {
+        font-size: 0.78rem;
+        padding: 0 12px;
+        min-height: 44px;
+        flex-shrink: 0;                 /* never squish — scroll instead */
+      }
+
+      /* Cards: single column */
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      /* Full-width cards (logged / completed / cron tabs) */
+      .full-card {
+        padding: 16px 12px;
+        overflow-x: auto;              /* allow table to scroll horizontally */
+      }
+
+      /* Action table: set a min-width so columns don't squish — card scrolls */
+      .action-table {
+        min-width: 400px;
+      }
+
+      /* Completed list: align items to top for multi-line entries */
+      .completed-list li {
+        align-items: flex-start;
+      }
+
+      /* Ensure reminder time badges don't break layout */
+      .reminder-time {
+        font-size: 0.72rem;
+        padding: 2px 6px;
+      }
     }
   </style>
 </head>
