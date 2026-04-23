@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="last-updated" content="Apr 23, 2026 — pipeline test">
+  <meta name="last-updated" content="Apr 23, 2026 — tab navigation added">
   <title>Big Belle's Dashboard 💜</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -18,7 +18,7 @@
 
     header {
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
     }
 
     header h1 {
@@ -32,6 +32,45 @@
       font-size: 0.9rem;
       margin-top: 4px;
     }
+
+    /* Tab navigation */
+    .tab-nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 auto 28px auto;
+      max-width: 800px;
+    }
+
+    .tab-btn {
+      background: white;
+      border: 2px solid #d8c8f0;
+      color: #6b3fa0;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 8px 20px;
+      border-radius: 24px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      background: #f0eaf8;
+      border-color: #6b3fa0;
+    }
+
+    .tab-btn.active {
+      background: #6b3fa0;
+      color: white;
+      border-color: #6b3fa0;
+      box-shadow: 0 2px 8px rgba(107, 63, 160, 0.3);
+    }
+
+    /* Tab content panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
 
     .grid {
       display: grid;
@@ -137,6 +176,113 @@
       margin-bottom: 4px;
     }
 
+    /* Logged Actions / Completed Actions table */
+    .full-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(107, 63, 160, 0.08);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .full-card h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #6b3fa0;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .action-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .action-table th {
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #6b3fa0;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 8px 12px;
+      border-bottom: 2px solid #f0eaf8;
+    }
+
+    .action-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f0eaf8;
+      vertical-align: top;
+      line-height: 1.4;
+    }
+
+    .action-table tr:last-child td { border-bottom: none; }
+
+    .status-badge {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .status-done {
+      background: #e6f4ea;
+      color: #2e7d32;
+    }
+
+    .status-logged {
+      background: #f0eaf8;
+      color: #6b3fa0;
+    }
+
+    .status-complete {
+      background: #e8f5e9;
+      color: #1b5e20;
+    }
+
+    /* Completed actions */
+    .completed-list { list-style: none; }
+    .completed-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0eaf8;
+      font-size: 0.92rem;
+    }
+    .completed-list li:last-child { border-bottom: none; }
+    .check-icon {
+      width: 22px; height: 22px;
+      background: #6b3fa0;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    /* Cron jobs */
+    .cron-empty {
+      text-align: center;
+      padding: 48px 20px;
+    }
+    .cron-empty .cron-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+    .cron-empty p {
+      color: #888;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .cron-empty strong { color: #6b3fa0; }
+
     .empty { color: #bbb; font-size: 0.88rem; font-style: italic; }
 
     .privacy-badge {
@@ -181,6 +327,7 @@
     @media (max-width: 480px) {
       header h1 { font-size: 1.5rem; }
       .grid { grid-template-columns: 1fr; }
+      .tab-btn { font-size: 0.8rem; padding: 7px 14px; }
     }
   </style>
 </head>
@@ -193,53 +340,142 @@
     <p>Updated by Handyman Wookling · <span id="last-updated">Loading...</span></p>
   </header>
 
-  <div class="grid">
+  <!-- Tab Navigation -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('home', this)">🏠 Home</button>
+    <button class="tab-btn" onclick="switchTab('logged', this)">📋 Logged Actions</button>
+    <button class="tab-btn" onclick="switchTab('completed', this)">✅ Completed Actions</button>
+    <button class="tab-btn" onclick="switchTab('cron', this)">⏱️ Cron Jobs</button>
+  </nav>
 
-    <!-- Tasks -->
-    <div class="card">
-      <h2>✅ My Tasks</h2>
-      <ul class="task-list" id="tasks">
-        <li><span class="task-dot"></span>Dashboard is up and running! 🎉</li>
-      </ul>
+  <!-- HOME TAB -->
+  <div id="tab-home" class="tab-panel active">
+    <div class="grid">
+
+      <!-- Tasks -->
+      <div class="card">
+        <h2>✅ My Tasks</h2>
+        <ul class="task-list" id="tasks">
+          <li><span class="task-dot"></span>Dashboard is up and running! 🎉</li>
+        </ul>
+      </div>
+
+      <!-- Reminders -->
+      <div class="card">
+        <h2>⏰ Reminders</h2>
+        <ul class="reminder-list" id="reminders">
+          <li>
+            <span class="reminder-time">Just now</span>
+            <span>Your dashboard is ready! Ask Handyman to add reminders here anytime.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Notes & References -->
+      <div class="card">
+        <h2>📌 Notes & References</h2>
+        <div id="notes">
+          <div class="note-block">
+            <div class="note-label">Welcome</div>
+            Ask Handyman to save anything here — links, how-to guides, important info, anything you want to keep handy.
+          </div>
+        </div>
+      </div>
+
+      <!-- Messages from Handyman -->
+      <div class="card">
+        <h2>🛠️ From Handyman</h2>
+        <div id="messages">
+          <div class="message-block">
+            <div class="message-from">Handyman Wookling · Apr 23, 2026</div>
+            Hey Big Belle! 💜 Your personal dashboard is live. I can update this anytime — just ask me on Telegram to add tasks, reminders, notes, or anything else you want to track here. It's all yours!
+          </div>
+          <div class="message-block">
+            <div class="message-from">Handyman Wookling · Apr 23, 2026</div>
+            Pipeline test — Apr 23, 2026. Your dashboard is fully operational and I can update it anytime you ask! 🛠️💜
+          </div>
+        </div>
+      </div>
+
     </div>
+  </div>
 
-    <!-- Reminders -->
-    <div class="card">
-      <h2>⏰ Reminders</h2>
-      <ul class="reminder-list" id="reminders">
+  <!-- LOGGED ACTIONS TAB -->
+  <div id="tab-logged" class="tab-panel">
+    <div class="full-card">
+      <h2>📋 Logged Actions</h2>
+      <table class="action-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Action</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Apr 23, 2026</td>
+            <td>Pipeline test — verified dashboard update pipeline end-to-end</td>
+            <td><span class="status-badge status-done">✓ Done</span></td>
+          </tr>
+          <tr>
+            <td>Apr 23, 2026</td>
+            <td>Dashboard created — Big Belle's personal dashboard launched at wookling1.github.io/belle-dashboard</td>
+            <td><span class="status-badge status-done">✓ Done</span></td>
+          </tr>
+          <tr>
+            <td>Apr 23, 2026</td>
+            <td>Tab navigation added — Home, Logged Actions, Completed Actions, and Cron Jobs tabs</td>
+            <td><span class="status-badge status-done">✓ Done</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- COMPLETED ACTIONS TAB -->
+  <div id="tab-completed" class="tab-panel">
+    <div class="full-card">
+      <h2>✅ Completed Actions</h2>
+      <ul class="completed-list">
         <li>
-          <span class="reminder-time">Just now</span>
-          <span>Your dashboard is ready! Ask Handyman to add reminders here anytime.</span>
+          <div class="check-icon">✓</div>
+          <div>
+            <strong>Dashboard created</strong> — Apr 23, 2026<br>
+            <span style="color:#888; font-size:0.85rem;">Big Belle's personal dashboard launched and live on GitHub Pages.</span>
+          </div>
+        </li>
+        <li>
+          <div class="check-icon">✓</div>
+          <div>
+            <strong>Pipeline test passed</strong> — Apr 23, 2026<br>
+            <span style="color:#888; font-size:0.85rem;">Dashboard update pipeline verified end-to-end successfully.</span>
+          </div>
+        </li>
+        <li>
+          <div class="check-icon">✓</div>
+          <div>
+            <strong>Tab navigation added</strong> — Apr 23, 2026<br>
+            <span style="color:#888; font-size:0.85rem;">Four-tab layout deployed: Home, Logged Actions, Completed Actions, Cron Jobs.</span>
+          </div>
         </li>
       </ul>
     </div>
+  </div>
 
-    <!-- Notes & References -->
-    <div class="card">
-      <h2>📌 Notes & References</h2>
-      <div id="notes">
-        <div class="note-block">
-          <div class="note-label">Welcome</div>
-          Ask Handyman to save anything here — links, how-to guides, important info, anything you want to keep handy.
-        </div>
+  <!-- CRON JOBS TAB -->
+  <div id="tab-cron" class="tab-panel">
+    <div class="full-card">
+      <h2>⏱️ Cron Jobs</h2>
+      <div class="cron-empty">
+        <div class="cron-icon">🕰️</div>
+        <p>
+          <strong>No scheduled jobs yet!</strong><br><br>
+          A cron job is an automatic task that runs on a schedule — like a reminder that fires itself, no action needed from you.<br><br>
+          Ask Handyman on Telegram to set one up! For example: <em>"Send me a daily summary every morning"</em> or <em>"Check this website every week for changes."</em>
+        </p>
       </div>
     </div>
-
-    <!-- Messages from Handyman -->
-    <div class="card">
-      <h2>🛠️ From Handyman</h2>
-      <div id="messages">
-        <div class="message-block">
-          <div class="message-from">Handyman Wookling · Apr 23, 2026</div>
-          Hey Big Belle! 💜 Your personal dashboard is live. I can update this anytime — just ask me on Telegram to add tasks, reminders, notes, or anything else you want to track here. It's all yours!
-        </div>
-        <div class="message-block">
-          <div class="message-from">Handyman Wookling · Apr 23, 2026</div>
-          Pipeline test — Apr 23, 2026. Your dashboard is fully operational and I can update it anytime you ask! 🛠️💜
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <footer>
@@ -252,6 +488,18 @@
     document.getElementById('last-updated').textContent = meta
       ? meta.getAttribute('content')
       : 'Apr 23, 2026';
+
+    // Tab switching
+    function switchTab(tabId, btn) {
+      // Hide all panels
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      // Deactivate all buttons
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      // Show selected panel
+      document.getElementById('tab-' + tabId).classList.add('active');
+      // Activate clicked button
+      btn.classList.add('active');
+    }
   </script>
 
 </body>
