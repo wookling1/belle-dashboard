@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="last-updated" content="Apr 28, 2026 — Pending Actions on Home">
+  <meta name="last-updated" content="Apr 28, 2026 — Pending count on Home">
   <title>Big Belle's Dashboard 💜</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -426,10 +426,10 @@
   <div id="tab-home" class="tab-panel active">
     <div class="grid">
       <div class="card">
-        <h2>📝 Pending Actions <small style="font-weight:500;color:#888">(collapsible)</small></h2>
+        <h2>📝 Pending Actions <span id="pending-count-badge" style="color:#6b3fa0;font-weight:600;margin-left:6px;"></span> <small style="font-weight:500;color:#888">(collapsible)</small></h2>
         <details open>
-          <summary style="cursor:pointer;color:#6b3fa0;font-weight:600;margin-bottom:8px;">Show/Hide</summary>
-          <ul class="task-list">
+          <summary id="pending-summary" style="cursor:pointer;color:#6b3fa0;font-weight:600;margin-bottom:8px;">Pending Actions (<span id="pending-count">0</span>)</summary>
+          <ul id="pending-actions-list" class="task-list">
           <li><span class="task-dot"></span><strong>Apr 28, 2026</strong> — TTS enabled for Handyman — OpenAI tts-1-hd (Onyx voice); Telegram voice notes operational; DSP disabled</li>
           <li><span class="task-dot"></span><strong>Apr 28, 2026</strong> — Security incident logged — Apr 22 scam-text; advised block/report; policy: all security incidents must be logged immediately</li>
           <li><span class="task-dot"></span><strong>Apr 28, 2026</strong> — Shared To‑Do/Booking list captured (pets, tickets, omakase, Italy trains/hotels, Japan trains/restaurants, US travel)</li>
@@ -573,6 +573,20 @@
       // Activate clicked button
       btn.classList.add('active');
     }
+  </script>
+
+
+  <script>
+    (function(){
+      try {
+        var list=document.getElementById('pending-actions-list');
+        if(!list) return;
+        var count=Array.from(list.querySelectorAll('li')).filter(function(li){ return !li.classList.contains('empty'); }).length;
+        var c1=document.getElementById('pending-count'); if(c1) c1.textContent = count;
+        var c2=document.getElementById('pending-count-badge'); if(c2) c2.textContent = '('+count+')';
+        var sum=document.getElementById('pending-summary'); if(sum) sum.innerHTML = 'Pending Actions ('+count+')';
+      } catch(e){}
+    })();
   </script>
 
 </body>
